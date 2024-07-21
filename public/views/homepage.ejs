@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Admin Dashboard</title>
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Add CSS to show the navigation by default */
+        .navigation {
+            display: block;
+            position: fixed;
+            transition: transform 0.3s ease;
+        }
+        /* Add CSS to hide the navigation when it has a specific class */
+        .navigation.hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+        <div class="navigation">
+            <ul>
+                <li>
+                    <a href="#">
+                        <span class="title">HOSTEL ZONE</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="icon">
+                            <ion-icon name="search-circle-outline"></ion-icon>                        </span>
+                        <span class="title">Search</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/grievances">
+                        <span class="icon">
+                            <ion-icon name="list-outline"></ion-icon>                        </span>
+                        <span class="title">Greivances</span>
+                    </a>
+                </li>
+                <!-- Container for displaying grievances -->
+
+
+                <li>
+                    <a href="/lab">
+                        <span class="icon">
+                            <ion-icon name="desktop-outline"></ion-icon>                        </span>
+                        <span class="title">Lab Hour Permission</span>
+                    </a>
+                </li>
+
+
+
+                <li>
+                    <a href="#">
+                        <span class="icon">
+                            <ion-icon name="log-out-outline"></ion-icon>
+                        </span>
+                        <span class="title">Log Out</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+
+        <!-- ========================= Main ==================== -->
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle" id="menuToggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+
+                <div class="search">
+                    <label>
+                        <input type="text" placeholder="Search here">
+                        <ion-icon name="search-outline"></ion-icon>
+                    </label>
+                </div>
+
+                <div class="user">
+                    <img src="images/admin.jpg" alt="">
+                </div>
+            </div>
+
+            <!-- ======================= Cards ================== -->
+            <div class="cardBox">
+                <div class="card">
+                    <div>
+                        <div class="numbers">30</div>
+                        <div class="cardName">Greivances List</div>
+                    </div>
+
+                    <div class="iconBx">
+                        <ion-icon name="newspaper-outline"></ion-icon>                    </div>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <div class="numbers">10</div>
+                        <div class="cardName">Greivances in Progress</div>
+                    </div>
+
+                    <div class="iconBx">
+                        <ion-icon name="code-working-outline"></ion-icon>                    </div>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <div class="numbers">5</div>
+                        <div class="cardName">Pending Greivances</div>
+                    </div>
+
+                    <div class="iconBx">
+                        <ion-icon name="code-download-outline"></ion-icon>                    </div>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <div class="numbers">10</div>
+                        <div class="cardName">Solved Greivances</div>
+                    </div>
+
+                    <div class="iconBx">
+                        <ion-icon name="thumbs-up-outline"></ion-icon>                    </div>
+                </div>
+            </div>
+
+            <!-- ================ Order Details List ================= -->
+            <div class="details">
+                <div class="recentOrders">
+                    <div class="cardHeader">
+                        <h2>Recent Greivances</h2>
+                        <a href="#" class="btn">View All</a>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Inmates Name</td>
+                                <td>Greivances</td>
+                                <td>Status</td>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Nivedhitha</td>
+                                <td>2</td>
+                                <td><span class="status delivered">Solved</span></td>
+                            </tr>
+
+                            <tr>
+                                <td>Dharani</td>
+                                <td>1</td>
+                                <td><span class="status pending">Pending</span></td>
+                            </tr>
+
+                            <tr>
+                                <td>Nandhini</td>
+                                <td>1</td>
+                                <td><span class="status return">Progress</span></td>
+                            </tr>
+
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+               
+    <!-- =========== Scripts =========  -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script>
+        // Add JavaScript to toggle the navigation menu
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            var navigation = document.querySelector('.navigation');
+            navigation.classList.toggle('hide'); // Toggle the 'hide' class
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Permission requests</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <style>
+        body {
+            background-color: #f0f0f0; /* Set background color */
+            font-size: 16px;
+        }
+
+        h1 {
+            text-align: center; /* Center align h1 */
+            color: #000000;
+            font-size: 24px; /* Set h1 font size */
+            margin-bottom: 20px;
+        }
+
+        .table-dark {
+            background-color: #FFBB33; /* Set table background color to blue */
+            color: rgb(148, 61, 7);; /* Set table text color to white */
+        }
+        .table-dark th {
+            color: black; /* Set table heading color to black */
+        }
+    </style>
+</head>
+<body>
+    <h1>LAB-PERMISSION REQUESTS</h1>
+    <div class="container mt-3">
+        <table class="table table-dark">
+            <thead>
+                <th>Sno</th>
+                <th>RollNo</th>
+                <th>Reason</th>
+                <th>Course</th>
+                <th>Year</th>
+                <th>Requested Time</th>
+                <th>Status</th>
+                <th>Current Date</th>
+                <th>Image</th>
+                <th>Action</th>
+            </thead>
+            <tbody id="tbody1"></tbody>
+        </table>
+    </div>
+    <script type="module">
+        var stdNo = 0;
+        var tbody = document.getElementById('tbody1');
+
+        function AddItemToTable(sno,rollNumber,reason,course,year,requestedTime,status,currentDate,imageUrl,labPermissionId) {
+            let trow = document.createElement("tr");
+            let td1 = document.createElement('td');
+            let td2 = document.createElement('td');
+            let td3 = document.createElement('td');
+            let td4 = document.createElement('td');
+            let td5 = document.createElement('td');
+            let td6 = document.createElement('td');
+            let td7 = document.createElement('td');
+            let td8 = document.createElement('td');
+            let td9 = document.createElement('td');
+            let td10 = document.createElement('td');
+            let img = document.createElement('img');
+            let approveBtn = document.createElement('button');
+            let denyBtn = document.createElement('button');
+
+            td1.innerHTML = sno;
+            td2.innerHTML = rollNumber;
+            td3.innerHTML = reason;
+            td4.innerHTML = course;
+            td5.innerHTML = year;
+            td6.innerHTML = requestedTime;
+            td7.innerHTML = status;
+            td8.innerHTML = currentDate;
+
+            if (imageUrl) {
+                img.src = imageUrl;
+                img.width = 50;
+                td9.appendChild(img);
+            } else {
+                td9.textContent = "Image Not Available";
+            }
+
+            approveBtn.textContent = "Approve";
+            denyBtn.textContent = "Deny";
+
+            approveBtn.addEventListener('click', function() {
+                updateRequestStatus(labPermissionId, 'approved');
+            });
+
+            denyBtn.addEventListener('click', function() {
+                updateRequestStatus(labPermissionId, 'denied');
+            });
+
+            td10.appendChild(approveBtn);
+            td10.appendChild(denyBtn);
+
+            trow.appendChild(td1);
+            trow.appendChild(td2);
+            trow.appendChild(td3);
+            trow.appendChild(td4);
+            trow.appendChild(td5);
+            trow.appendChild(td6);
+            trow.appendChild(td7);
+            trow.appendChild(td8);
+            trow.appendChild(td9);
+            trow.appendChild(td10);
+
+
+            tbody.appendChild(trow);
+        }
+        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getDatabase, ref,get,set,update,onValue} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+        
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj_F96EDsJBBcIrIKAzHD5-JddbHO-ymo",
+            authDomain: "hostelzone-1ce77.firebaseapp.com",
+            databaseURL: "https://hostelzone-1ce77-default-rtdb.firebaseio.com",
+            projectId: "hostelzone-1ce77",
+            storageBucket: "hostelzone-1ce77.appspot.com",
+            messagingSenderId: "717176220393",
+            appId: "1:717176220393:web:9682b0c77e35bb83c75e78",
+            measurementId: "G-J8163EFTB8"
+        };
+
+        // Initialize Firebase
+        const firebaseApp = initializeApp(firebaseConfig);
+        const db = getDatabase(firebaseApp);
+
+        async function updateRequestStatus(labPermissionId, status) {
+    try {
+        const requestsRef = ref(db, 'requests');
+        const snapshot = await get(requestsRef);
+        const requests = snapshot.val();
+
+        for (const degreeKey in requests) {
+            const courses = requests[degreeKey];
+
+            for (const courseKey in courses) {
+                const years = courses[courseKey];
+
+                for (const yearKey in years) {
+                    const groups = years[yearKey];
+
+                    for (const groupKey in groups) {
+                        const requests = groups[groupKey];
+
+                        for (const requestId in requests) {
+                            if (requestId === labPermissionId) {
+                                const requestRef = ref(db, `requests/${degreeKey}/${courseKey}/${yearKey}/${groupKey}/${requestId}`);
+                                await update(requestRef, { status });
+                                console.log("Status updated successfully!");
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error updating status:", error);
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const requestsContainer = document.getElementById("tbody1");
+
+    try {
+        // Fetch the initial data
+        await fetchDataAndPopulateTable();
+
+        // Listen for changes in the database and update the table accordingly
+        const requestsRef = ref(db, "requests");
+        onValue(requestsRef, (snapshot) => {
+            requestsContainer.innerHTML = ""; // Clear the existing table
+            fetchDataAndPopulateTable();
+        });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        requestsContainer.innerHTML = "<tr><td colspan='10'>Error fetching data: " + error.message + "</td></tr>";
+    }
+});
+
+async function fetchDataAndPopulateTable() {
+    const requestsContainer = document.getElementById("tbody1");
+
+    const requestsSnapshot = await get(ref(db, "requests"));
+    const requests = requestsSnapshot.val();
+
+    let requestsFound = false;
+
+    if (requests) {
+        for (const degreeKey in requests) {
+            const courses = requests[degreeKey];
+
+            for (const courseKey in courses) {
+                const courseRequestsSnapshot = await get(ref(db, `requests/${degreeKey}/${courseKey}`));
+                const courseRequests = courseRequestsSnapshot.val();
+
+                if (courseRequests) {
+                    const courseHasRequests = Object.values(courseRequests).some((year) => {
+                        return Object.values(year).some((group) => {
+                            return Object.keys(group).length > 0;
+                        });
+                    });
+
+                    if (courseHasRequests) {
+                        requestsFound = true;
+
+                        for (const yearKey in courseRequests) {
+                            const year = courseRequests[yearKey];
+
+                            for (const groupKey in year) {
+                                const group = year[groupKey];
+
+                                const groupRequestsSnapshot = await get(
+                                    ref(db, `requests/${degreeKey}/${courseKey}/${yearKey}/${groupKey}`)
+                                );
+                                const groupRequests = groupRequestsSnapshot.val();
+
+                                if (groupRequests) {
+                                    Object.entries(groupRequests).forEach(([labPermissionId, request]) => {
+                                        if (request.status === "forwarded") {
+                                            AddItemToTable(
+                                                ++stdNo,
+                                                request.rollNumber,
+                                                request.reason,
+                                                courseKey,
+                                                yearKey,
+                                                request.requestedTime,
+                                                request.status,
+                                                request.currentDate,
+                                                request.imageUrl,
+                                                labPermissionId
+                                            );
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (!requestsFound) {
+        requestsContainer.innerHTML = "<tr><td colspan='10'>No requests found</td></tr>";
+    }
+}
+
+    </script>
+</body>
+</html>
